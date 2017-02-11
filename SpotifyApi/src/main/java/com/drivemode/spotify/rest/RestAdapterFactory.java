@@ -19,7 +19,7 @@ import retrofit2.Retrofit;
  */
 public class RestAdapterFactory {
     public static final String TAG = RestAdapterFactory.class.getSimpleName();
-    public static final String SPOTIFY_WEB_API_ENDPOINT = "https://api.spotify.com/v1";
+    public static final String SPOTIFY_WEB_API_ENDPOINT = "https://api.spotify.com/v1/";
     public static final String SPOTIFY_AUTHENTICATE_ENDPOINT = "https://accounts.spotify.com/";
     private OkHttpClient mOkClient;
 
