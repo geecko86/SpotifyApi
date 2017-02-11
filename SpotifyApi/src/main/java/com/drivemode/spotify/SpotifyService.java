@@ -40,132 +40,132 @@ public interface SpotifyService {
      * Profiles *
      */
 
-    @GET("/me")
+    @GET("me")
     public Call<User> getMe();
 
-    @GET("/user/{id}")
+    @GET("user/{id}")
     public Call<User> getUser(@Path("id") String userId);
 
     /**
      * Playlists *
      */
 
-    @GET("/users/{id}/playlists")
+    @GET("users/{id}/playlists")
     public Call<Pager<Playlist>> getPlaylists(@Path("id") String userId, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/users/{id}/playlists")
+    @GET("users/{id}/playlists")
     public Call<Pager<Playlist>> getPlaylists(@Path("id") String userId);
 
-    @GET("/users/{user_id}/playlists/{playlist_id}")
+    @GET("users/{user_id}/playlists/{playlist_id}")
     public Call<Playlist> getPlaylist(@Path("user_id") String userId, @Path("playlist_id") String playlistId);
 
-    @GET("/users/{user_id}/playlists/{playlist_id}/tracks")
+    @GET("users/{user_id}/playlists/{playlist_id}/tracks")
     public Call<Pager<PlaylistTrack>> getPlaylistTracks(@Path("user_id") String userId, @Path("playlist_id") String playlistId, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/users/{user_id}/playlists/{playlist_id}/tracks")
+    @GET("users/{user_id}/playlists/{playlist_id}/tracks")
     public Call<Pager<PlaylistTrack>> getPlaylistTracks(@Path("user_id") String userId, @Path("playlist_id") String playlistId);
 
-    @POST("/users/{user_id}/playlists")
+    @POST("users/{user_id}/playlists")
     public Call<Playlist> createPlaylist(@Path("user_id") String userId, @Query("name") String name);
 
-    @POST("/users/{user_id}/playlists")
+    @POST("users/{user_id}/playlists")
     public Call<Playlist> createPlaylist(@Path("user_id") String userId, @Query("name") String name, @Query("public") boolean is_public);
 
-    @POST("/users/{user_id}/playlists/{playlist_id}/tracks")
+    @POST("users/{user_id}/playlists/{playlist_id}/tracks")
     public Call<SnapshotId> addTracksToPlaylist(@Path("user_id") String userId, @Path("playlist_id") String playlistId, @Query("uris") String trackUris);
 
-    @POST("/users/{user_id}/playlists/{playlist_id}/tracks")
+    @POST("users/{user_id}/playlists/{playlist_id}/tracks")
     public Call<SnapshotId> addTracksToPlaylist(@Path("user_id") String userId, @Path("playlist_id") String playlistId, @Query("uris") String trackUris, @Query("position") int position);
 
-    @DELETEWITHBODY("/users/{user_id}/playlists/{playlist_id}/tracks")
+    @DELETEWITHBODY("users/{user_id}/playlists/{playlist_id}/tracks")
     public Call<SnapshotId> removeTracksFromPlaylist(@Path("user_id") String userId, @Path("playlist_id") String playlistId, @Body TracksToRemove tracksToRemove);
 
-    @DELETEWITHBODY("/users/{user_id}/playlists/{playlist_id}/tracks")
+    @DELETEWITHBODY("users/{user_id}/playlists/{playlist_id}/tracks")
     public Call<SnapshotId> removeTracksFromPlaylist(@Path("user_id") String userId, @Path("playlist_id") String playlistId, @Body TracksToRemoveWithPosition tracksToRemoveWithPosition);
 
     // todo: process status code and return boolean
-    @PUT("/users/{user_id}/playlists/{playlist_id}/tracks")
+    @PUT("users/{user_id}/playlists/{playlist_id}/tracks")
     public Call<Boolean> replaceTracksInPlaylist(@Path("user_id") String userId, @Path("playlist_id") String playlistId, @Query("uris") String trackUris);
 
     // todo: process status code and return boolean
-    @PUT("/users/{user_id}/playlists/{playlist_id}")
+    @PUT("users/{user_id}/playlists/{playlist_id}")
     public Call<Boolean> changePlaylistDetails(@Path("user_id") String userId, @Path("playlist_id") String playlistId, @Query("name") String name);
 
     // todo: process status code and return boolean
-    @PUT("/users/{user_id}/playlists/{playlist_id}")
+    @PUT("users/{user_id}/playlists/{playlist_id}")
     public Call<Boolean> changePlaylistDetails(@Path("user_id") String userId, @Path("playlist_id") String playlistId, @Query("public") boolean is_public);
 
     /**
      * Albums *
      */
 
-    @GET("/albums/{id}")
+    @GET("albums/{id}")
     public Call<Album> getAlbum(@Path("id") String albumId);
 
-    @GET("/albums")
+    @GET("albums")
     public Call<Albums> getAlbums(@Query("ids") String albumIds);
 
-    @GET("/albums/{id}/tracks")
+    @GET("albums/{id}/tracks")
     public Call<Pager<Track>> getAlbumTracks(@Path("id") String albumId);
 
-    @GET("/albums/{id}/tracks")
+    @GET("albums/{id}/tracks")
     public Call<Pager<Track>> getAlbumTracks(@Path("id") String albumId, @Query("offset") int offset, @Query("limit") int limit);
 
     /**
      * Artists *
      */
 
-    @GET("/artists/{id}/albums")
+    @GET("artists/{id}/albums")
     public Call<Pager<Album>> getArtistAlbums(@Path("id") String artistId, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/artists/{id}/albums")
+    @GET("artists/{id}/albums")
     public Call<Pager<Album>> getArtistAlbums(@Path("id") String artistId);
 
-    @GET("/artists/{id}/top-tracks")
+    @GET("artists/{id}/top-tracks")
     public Call<Pager<Track>> getArtistTopTrack(@Path("id") String artistId, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/artists/{id}/top-tracks")
+    @GET("artists/{id}/top-tracks")
     public Call<Pager<Track>> getArtistTopTrack(@Path("id") String artistId);
 
-    @GET("/artists/{id}/related-artists")
+    @GET("artists/{id}/related-artists")
     public Call<Pager<Artist>> getRelatedArtists(@Path("id") String artistId, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/artists/{id}/related-artists")
+    @GET("artists/{id}/related-artists")
     public Call<Pager<Artist>> getRelatedArtists(@Path("id") String artistId);
 
-    @GET("/artists/{id}")
+    @GET("artists/{id}")
     public Call<Artist> getArtist(@Path("id") String artistId);
 
-    @GET("/artists")
+    @GET("artists")
     public Call<Artists> getArtists(@Query("ids") String artistIds);
 
     /**
      * Tracks *
      */
 
-    @GET("/tracks/{id}")
+    @GET("tracks/{id}")
     public Call<Track> getTrack(@Path("id") String trackId);
 
-    @GET("/tracks")
+    @GET("tracks")
     public Call<Tracks> getTracks(@Query("ids") String trackIds);
 
     /**
      * Browse *
      */
 
-    @GET("/browse/featured-playlists")
+    @GET("browse/featured-playlists")
     public Call<FeaturedPlaylists> getFeaturedPlaylists(@QueryMap Map<String, String> options);
 
-    @GET("/browse/featured-playlists")
+    @GET("browse/featured-playlists")
     public Call<FeaturedPlaylists> getFeaturedPlaylists(@QueryMap Map<String, String> options, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/browse/new-releases")
+    @GET("browse/new-releases")
     public Call<NewReleases> getNewReleases();
 
-    @GET("/browse/new-releases")
+    @GET("browse/new-releases")
     public Call<NewReleases> getNewReleases(@Query("country") String country);
 
-    @GET("/browse/new-releases")
+    @GET("browse/new-releases")
     public Call<NewReleases> getNewReleases(@Query("country") String country, @Query("offset") int offset, @Query("limit") int limit);
 
 
@@ -173,72 +173,72 @@ public interface SpotifyService {
      * Library / Your Music *
      */
 
-    @GET("/me/tracks")
+    @GET("me/tracks")
     public Call<Pager<SavedTrack>> getMySavedTracks();
 
-    @GET("/me/tracks")
+    @GET("me/tracks")
     public Call<Pager<SavedTrack>> getMySavedTracks(@Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/me/tracks/contains")
+    @GET("me/tracks/contains")
     public Call<Boolean[]> containsMySavedTracks(@Query("ids") String ids);
 
     // todo: process status code and return boolean
-    @PUT("/me/tracks")
+    @PUT("me/tracks")
     public Call<Boolean> addToMySavedTracks(@Query("ids") String ids);
 
     // todo: process status code and return boolean
-    @DELETE("/me/tracks")
+    @DELETE("me/tracks")
     public Call<Boolean> removeFromMySavedTracks(@Query("ids") String ids);
 
     /**
      * Search *
      */
 
-    @GET("/search?type=track")
+    @GET("search?type=track")
     public Call<TracksPager> searchTracks(@Query("q") String q);
 
-    @GET("/search?type=track")
+    @GET("search?type=track")
     public Call<TracksPager> searchTracks(@Query("q") String q, @Query("market") String market);
 
-    @GET("/search?type=track")
+    @GET("search?type=track")
     public Call<TracksPager> searchTracks(@Query("q") String q, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/search?type=track")
+    @GET("search?type=track")
     public Call<TracksPager> searchTracks(@Query("q") String q, @Query("market") String market, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/search?type=artist")
+    @GET("search?type=artist")
     public Call<ArtistsPager> searchArtists(@Query("q") String q);
 
-    @GET("/search?type=artist")
+    @GET("search?type=artist")
     public Call<ArtistsPager> searchArtists(@Query("q") String q, @Query("market") String market);
 
-    @GET("/search?type=artist")
+    @GET("search?type=artist")
     public Call<ArtistsPager> searchArtists(@Query("q") String q, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/search?type=artist")
+    @GET("search?type=artist")
     public Call<ArtistsPager> searchArtists(@Query("q") String q, @Query("market") String market, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/search?type=album")
+    @GET("search?type=album")
     public Call<AlbumsPager> searchAlbums(@Query("q") String q);
 
-    @GET("/search?type=album")
+    @GET("search?type=album")
     public Call<AlbumsPager> searchAlbums(@Query("q") String q, @Query("market") String market);
 
-    @GET("/search?type=album")
+    @GET("search?type=album")
     public Call<AlbumsPager> searchAlbums(@Query("q") String q, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/search?type=album")
+    @GET("search?type=album")
     public Call<AlbumsPager> searchAlbums(@Query("q") String q, @Query("market") String market, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/search?type=playlist")
+    @GET("search?type=playlist")
     public Call<PlaylistsPager> searchPlaylists(@Query("q") String q);
 
-    @GET("/search?type=playlist")
+    @GET("search?type=playlist")
     public Call<PlaylistsPager> searchPlaylists(@Query("q") String q, @Query("market") String market);
 
-    @GET("/search?type=playlist")
+    @GET("search?type=playlist")
     public Call<PlaylistsPager> searchPlaylists(@Query("q") String q, @Query("offset") int offset, @Query("limit") int limit);
 
-    @GET("/search?type=playlist")
+    @GET("search?type=playlist")
     public Call<PlaylistsPager> searchPlaylists(@Query("q") String q, @Query("market") String market, @Query("offset") int offset, @Query("limit") int limit);
 }

@@ -15,6 +15,7 @@ import com.drivemode.spotify.rest.RestAdapterFactory;
 import java.io.IOException;
 
 import okhttp3.Interceptor;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -224,7 +225,13 @@ public class SpotifyApi {
         public okhttp3.Response intercept(Chain chain) {
             AccessToken token = mTokenStore.read();
             if (token != null) {
-                chain.request().header("Authorization:"+ token.tokenType + " " + token.accessToken);
+                try {
+                    Request request = chain.request().newBuilder()
+                            .addHeader("Authorization", token.tokenType + " " + token.accessToken).build();
+                    return chain.proceed(request);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             return null;
         }

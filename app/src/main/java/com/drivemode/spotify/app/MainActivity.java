@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -62,18 +61,19 @@ public class MainActivity extends Activity implements SpotifyApi.AuthenticationL
     @Override
     public void onLoadFinished(Loader<Response<User>> loader, Response<User> data) {
         Toast.makeText(getApplicationContext(), "Logged in as " + data.getResult().id, Toast.LENGTH_SHORT).show();
-        Call<Pager<Playlist>> call = SpotifyApi.getInstance().getApiService().getPlaylists(data.getResult().id);
-        call.enqueue(new Callback<Pager<Playlist>>() {
-            @Override
-            public void onResponse(Call<Pager<Playlist>> call, retrofit2.Response<Pager<Playlist>> response) {
-                Log.v(TAG, "success");
-            }
+        SpotifyApi.getInstance().getApiService().getPlaylists(data.getResult().id).enqueue(
+                new Callback<Pager<Playlist>>() {
+                    @Override
+                    public void onResponse(Call<Pager<Playlist>> call, retrofit2.Response<Pager<Playlist>> response) {
+                        Toast.makeText(getApplicationContext(), response.body().items.get(0).name, Toast.LENGTH_SHORT).show();
+                    }
 
-            @Override
-            public void onFailure(Call<Pager<Playlist>> call, Throwable t) {
-                Log.v(TAG, "failed to load playlists: ", t);
-            }
-        });
+                    @Override
+                    public void onFailure(Call<Pager<Playlist>> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
+        );
     }
 
     @Override
