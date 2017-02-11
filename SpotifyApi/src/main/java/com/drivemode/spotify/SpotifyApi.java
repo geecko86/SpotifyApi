@@ -19,7 +19,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 
-
 /**
  * Singleton object to deal with Spotify Web API and user authorization.
  *

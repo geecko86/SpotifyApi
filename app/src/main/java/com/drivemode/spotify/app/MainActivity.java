@@ -62,7 +62,8 @@ public class MainActivity extends Activity implements SpotifyApi.AuthenticationL
     @Override
     public void onLoadFinished(Loader<Response<User>> loader, Response<User> data) {
         Toast.makeText(getApplicationContext(), "Logged in as " + data.getResult().id, Toast.LENGTH_SHORT).show();
-        SpotifyApi.getInstance().getApiService().getPlaylists(data.getResult().id, new Callback<Pager<Playlist>>() {
+        Call<Pager<Playlist>> call = SpotifyApi.getInstance().getApiService().getPlaylists(data.getResult().id);
+        call.enqueue(new Callback<Pager<Playlist>>() {
             @Override
             public void onResponse(Call<Pager<Playlist>> call, retrofit2.Response<Pager<Playlist>> response) {
                 Log.v(TAG, "success");
@@ -85,7 +86,7 @@ public class MainActivity extends Activity implements SpotifyApi.AuthenticationL
 
         @Override
         public User call(SpotifyService service) throws Exception {
-            return service.getMe();
+            return service.getMe().execute().body();
         }
     }
 }
