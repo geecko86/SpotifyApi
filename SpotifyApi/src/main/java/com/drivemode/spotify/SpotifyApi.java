@@ -12,11 +12,13 @@ import com.drivemode.spotify.auth.AccessToken;
 import com.drivemode.spotify.auth.AccessTokenStore;
 import com.drivemode.spotify.rest.RestAdapterFactory;
 
-import retrofit.Callback;
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+
 
 /**
  * Singleton object to deal with Spotify Web API and user authorization.
@@ -79,7 +81,7 @@ public class SpotifyApi {
      */
     public synchronized SpotifyService getApiService() {
         if (mSpotifyService == null) {
-            RestAdapter adapter = mAdapterFactory.provideWebApiAdapter(new WebApiAuthenticator());
+            Retrofit adapter = mAdapterFactory.provideWebApiAdapter(new WebApiAuthenticator());
             mSpotifyService = adapter.create(SpotifyService.class);
         }
         return mSpotifyService;
@@ -90,7 +92,7 @@ public class SpotifyApi {
      */
     public synchronized SpotifyAuthenticateService getAuthService() {
         if (mAuthenticateService == null) {
-            RestAdapter adapter = mAdapterFactory.provideAuthenticateApiAdapter();
+            Retrofit adapter = mAdapterFactory.provideAuthenticateApiAdapter();
             mAuthenticateService = adapter.create(SpotifyAuthenticateService.class);
         }
         return mAuthenticateService;
@@ -144,16 +146,20 @@ public class SpotifyApi {
             return;
         Log.v(TAG, data.toString());
         String code = data.getQueryParameter("code");
-        getAuthService().getAccessToken("authorization_code", code, mConfig.getRedirectUri(), mConfig.getClientId(), mConfig.getClientSecret(), new Callback<AccessToken>() {
+        Call<AccessToken> call = getAuthService().getAccessToken("authorization_code", code, mConfig.getRedirectUri(), mConfig.getClientId(), mConfig.getClientSecret());
+        call.enqueue(new Callback<AccessToken>() {
             @Override
-            public void success(AccessToken accessToken, Response response) {
-                Log.v(TAG, "success retrieving access token: " + accessToken.toString());
-                mTokenStore.store(accessToken);
+            public void onResponse(Call<AccessToken> call, retrofit2.Response<AccessToken> response) {
+                if (response.isSuccessful())
+                    Log.v(TAG, "success retrieving access token: " + response.body());
+                else
+                    Log.v(TAG, "failed");
+                mTokenStore.store(response.body());
                 listener.onReady();
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(Call<AccessToken> call, Throwable t) {
                 listener.onError();
             }
         });
@@ -169,16 +175,17 @@ public class SpotifyApi {
             return;
         }
         AccessToken token = mTokenStore.read();
-        getAuthService().refreshAccessToken("refresh_token", token.refreshToken, mConfig.getClientId(), mConfig.getClientSecret(), new Callback<AccessToken>() {
+        Call<AccessToken> call = getAuthService().refreshAccessToken("refresh_token", token.refreshToken, mConfig.getClientId(), mConfig.getClientSecret());
+        call.enqueue(new Callback<AccessToken>() {
             @Override
-            public void success(AccessToken accessToken, Response response) {
-                Log.v(TAG, "success refreshing access token: " + accessToken.toString());
-                mTokenStore.update(accessToken);
+            public void onResponse(Call<AccessToken> call, retrofit2.Response<AccessToken> response) {
+                Log.v(TAG, "success refreshing access token: " + response.body());
+                mTokenStore.update(response.body());
                 listener.onReady();
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(Call<AccessToken> call, Throwable t) {
                 listener.onError();
             }
         });
@@ -193,8 +200,12 @@ public class SpotifyApi {
             return;
         }
         AccessToken token = mTokenStore.read();
-        AccessToken newToken = getAuthService().refreshAccessToken("refresh_token", token.refreshToken, mConfig.getClientId(), mConfig.getClientSecret());
-        mTokenStore.update(newToken);
+        Call<AccessToken> newToken = getAuthService().refreshAccessToken("refresh_token", token.refreshToken, mConfig.getClientId(), mConfig.getClientSecret());
+        try {
+            mTokenStore.update(newToken.execute().body());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public ClientConfig getConfig() {
@@ -209,13 +220,14 @@ public class SpotifyApi {
      * The request interceptor that will add the header with OAuth
      * token to every request made with the wrapper.
      */
-    private class WebApiAuthenticator implements RequestInterceptor {
+    private class WebApiAuthenticator implements Interceptor {
         @Override
-        public void intercept(RequestFacade request) {
+        public okhttp3.Response intercept(Chain chain) {
             AccessToken token = mTokenStore.read();
             if (token != null) {
-                request.addHeader("Authorization", token.tokenType + " " + token.accessToken);
+                chain.request().header("Authorization:"+ token.tokenType + " " + token.accessToken);
             }
+            return null;
         }
     }
 

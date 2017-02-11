@@ -18,8 +18,8 @@ import com.drivemode.spotify.models.Pager;
 import com.drivemode.spotify.models.Playlist;
 import com.drivemode.spotify.models.User;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * @author KeishinYokomaku
@@ -64,13 +64,13 @@ public class MainActivity extends Activity implements SpotifyApi.AuthenticationL
         Toast.makeText(getApplicationContext(), "Logged in as " + data.getResult().id, Toast.LENGTH_SHORT).show();
         SpotifyApi.getInstance().getApiService().getPlaylists(data.getResult().id, new Callback<Pager<Playlist>>() {
             @Override
-            public void success(Pager<Playlist> playlistPager, retrofit.client.Response response) {
+            public void onResponse(Call<Pager<Playlist>> call, retrofit2.Response<Pager<Playlist>> response) {
                 Log.v(TAG, "success");
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                Log.v(TAG, "failed to load playlists: ", error);
+            public void onFailure(Call<Pager<Playlist>> call, Throwable t) {
+                Log.v(TAG, "failed to load playlists: ", t);
             }
         });
     }
