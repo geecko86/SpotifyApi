@@ -150,12 +150,12 @@ public class SpotifyApi {
         call.enqueue(new Callback<AccessToken>() {
             @Override
             public void onResponse(Call<AccessToken> call, retrofit2.Response<AccessToken> response) {
-                if (response.isSuccessful())
+                if (response.isSuccessful()) {
                     Log.v(TAG, "success retrieving access token: " + response.body());
-                else
+                    mTokenStore.store(response.body());
+                    listener.onReady();
+                } else
                     Log.v(TAG, "failed");
-                mTokenStore.store(response.body());
-                listener.onReady();
             }
 
             @Override
